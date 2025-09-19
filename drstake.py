@@ -158,7 +158,7 @@ async def access_key_options(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 def main():
     """Run the bot."""
-    application = ApplicationBuilder().token("8477862139:AAEnneE308Y_qokCo-DAFI1176YtcbZ4fF4").build()
+    application = ApplicationBuilder().token("8357757145:AAE4e8R-PriLNVa0-lOyk5tTmykcFV8geNA").build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(begin_process, pattern="^begin_process$"))
     application.add_handler(CallbackQueryHandler(select_mines, pattern="^mines_"))
@@ -169,4 +169,5 @@ def main():
    
 if __name__ == "__main__":
     main()
+
 
