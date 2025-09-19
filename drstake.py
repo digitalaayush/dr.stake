@@ -6,12 +6,11 @@ import asyncio
 # Predefined seed format (64-character hexadecimal)
 SEED_PATTERN = r"^[a-f0-9]{64}$"
 
-# Mini-App URL (Updated ✅)
+# Mini-App URL
 MINI_APP_URL = "https://drstake.surge.sh/"
 
-# Access Keys:
-ACCESS_KEY_1 = "73fa289jskp9zr0k"
-ACCESS_KEY_2 = "9g3b2c7d5g6e2j9g"
+# 🔑 Single Master Access Key
+MASTER_KEY = "89g6kk55rs87demo"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗠𝗘𝗦𝗔𝗚𝗘"""
@@ -42,7 +41,6 @@ async def select_mines(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     selected_mines = query.data.split("_")[1]
 
-    # Only allow 1 or 2 mines
     if selected_mines not in ["1", "2"]:
         await query.message.reply_text("❌ Invalid selection. Please choose 1 or 2 mines only.")
         return
@@ -56,7 +54,7 @@ async def select_mines(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def process_start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """𝗣𝗥𝗢𝗩𝗜𝗗𝗘 𝗬𝗢𝗨𝗥 𝗦𝗘𝗥𝗩𝗘𝗥 𝗦𝗘𝗘𝗗🪄"""
+    """𝗣𝗥𝗢𝗩𝗜𝗗𝗘 𝗬𝗢𝗨𝗥 𝗦𝗘𝗥𝗩𝗘𝗥 𝗦𝗘𝗘𝗗"""
     query = update.callback_query
     await query.answer()
     await query.message.reply_photo(
@@ -67,97 +65,65 @@ async def process_start_callback(update: Update, context: ContextTypes.DEFAULT_T
     context.user_data['waiting_for_seed'] = True
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """𝗛𝗔𝗡𝗗𝗟𝗘 𝗦𝗘𝗥𝗩𝗘𝗥 𝗦𝗘𝗘𝗗 𝗮𝗻𝗱 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬 𝗜𝗡𝗣𝗨𝗧"""
+    """𝗛𝗔𝗡𝗗𝗟𝗘 𝗦𝗘𝗘𝗗 + 𝗠𝗔𝗦𝗧𝗘𝗥 𝗞𝗘𝗬"""
     if context.user_data.get('waiting_for_seed'):
         server_seed = update.message.text.strip()
-        analyzing_message = await update.message.reply_text("🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚 𝗬𝗢𝗨𝗥 𝗦𝗘𝗥𝗩𝗘𝗥 𝗦𝗘𝗘𝗗...", parse_mode="Markdown")
-        animation_frames = ["🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚. ", "🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚.. ", "🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚... "]
-        for _ in range(2):
-            for frame in animation_frames:
-                await asyncio.sleep(0.5)
-                await analyzing_message.edit_text(frame, parse_mode="Markdown")
-        await asyncio.sleep(1)
+        analyzing_message = await update.message.reply_text("🔍 ANALYZING...")
+
+        await asyncio.sleep(2)
         if re.match(SEED_PATTERN, server_seed):
-            await analyzing_message.edit_text("✅ 𝗦𝗨𝗖𝗖𝗘𝗦𝗦𝗙𝗨𝗟𝗟𝗬 𝗩𝗘𝗥𝗜𝗙𝗜𝗘𝗗", parse_mode="Markdown")
-            await asyncio.sleep(2)
             await analyzing_message.edit_text(
-                "🔐 𝗘𝗡𝗧𝗘𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬 𝗢𝗥 𝗕𝗨𝗬 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬:",
-                parse_mode="Markdown",
+                "✅ SEED VERIFIED\n\n🔑 ENTER MASTER KEY:",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🔑𝗘𝗡𝗧𝗘𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", callback_data="enter_access_key")],
-                    [InlineKeyboardButton("👉𝗕𝗨𝗬 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", web_app=WebAppInfo(url=MINI_APP_URL))]
+                    [InlineKeyboardButton("🔑 ENTER MASTER KEY", callback_data="enter_access_key")]
                 ])
             )
         else:
-            await analyzing_message.edit_text("🚨𝗜𝗡𝗩𝗔𝗟𝗜𝗗 𝗦𝗘𝗥𝗩𝗘𝗥 𝗦𝗘𝗘𝗗, 𝗧𝗥𝗬 𝗔𝗚𝗔𝗜𝗡. /start", parse_mode="Markdown")
+            await analyzing_message.edit_text("🚨 INVALID SERVER SEED. TRY AGAIN. /start")
         context.user_data['waiting_for_seed'] = False
 
     elif context.user_data.get('awaiting_key'):
         key_entered = update.message.text.strip()
         context.user_data['awaiting_key'] = False
-        if key_entered in (ACCESS_KEY_1, ACCESS_KEY_2):
-            anim_msg = await update.message.reply_text("🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬...", parse_mode="Markdown")
-            animation_frames = ["🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚. ", "🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚.. ", "🔍 𝗔𝗡𝗔𝗟𝗬𝗭𝗜𝗡𝗚... "]
-            for _ in range(2):
-                for frame in animation_frames:
-                    await asyncio.sleep(0.5)
-                    await anim_msg.edit_text(frame, parse_mode="Markdown")
-            await asyncio.sleep(1)
-            if key_entered == ACCESS_KEY_1:
-                await anim_msg.edit_text("✅𝗦𝗨𝗖𝗖𝗘𝗦𝗦𝗙𝗨𝗟𝗟𝗬 𝗩𝗘𝗥𝗜𝗙𝗜𝗘𝗗. 𝗡𝗢𝗪 𝗚𝗢 𝗧𝗢 𝗦𝗧𝗔𝗞𝗘 & 𝗣𝗟𝗔𝗖𝗘 𝗔 𝗕𝗘𝗧🚀.", parse_mode="Markdown")
-            else:
-                await anim_msg.edit_text(
-                    "✅𝗞𝗘𝗬 𝗩𝗘𝗥𝗜𝗙𝗜𝗘𝗗!\n\n🔗 𝗢𝗣𝗘𝗡𝗜𝗡𝗚 𝗠𝗜𝗡𝗜 𝗔𝗣𝗣...",
-                    parse_mode="Markdown",
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("🚀 𝗢𝗣𝗘𝗡 𝗠𝗜𝗡𝗜 𝗔𝗣𝗣", web_app=WebAppInfo(url=MINI_APP_URL))]
-                    ])
-                )
-        else:
-            msg = await update.message.reply_text("❌ 𝗜𝗡𝗩𝗔𝗟𝗜𝗗 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬, 𝗧𝗥𝗬 𝗔𝗚𝗔𝗜𝗡.", parse_mode="Markdown")
-            await asyncio.sleep(1)
-            await msg.delete()
-            await update.message.reply_text(
-                "🔑𝗣𝗟𝗘𝗔𝗦𝗘 𝗘𝗡𝗧𝗘𝗥 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬 𝗛𝗘𝗥𝗘👇",
-                parse_mode="Markdown",
+
+        if key_entered == MASTER_KEY:
+            anim_msg = await update.message.reply_text("🔍 VERIFYING MASTER KEY...")
+            await asyncio.sleep(2)
+            await anim_msg.edit_text(
+                "✅ MASTER KEY VERIFIED!\n\n🚀 OPENING MINI APP...",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🔑𝗘𝗡𝗧𝗘𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", callback_data="enter_access_key")],
-                    [InlineKeyboardButton("👉𝗕𝗨𝗬 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", web_app=WebAppInfo(url=MINI_APP_URL))]
+                    [InlineKeyboardButton("🚀 OPEN MINI APP", web_app=WebAppInfo(url=MINI_APP_URL))]
                 ])
             )
+        else:
+            await update.message.reply_text("❌ INVALID MASTER KEY. TRY AGAIN.\n\n🔑 ENTER MASTER KEY:")
+
+async def access_key_options(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Ask for master key"""
+    query = update.callback_query
+    await query.answer()
+    if query.data == "enter_access_key":
+        msg = await query.message.edit_text("🔑 PLEASE ENTER YOUR MASTER KEY HERE👇")
+        context.user_data["awaiting_key"] = True
+        asyncio.create_task(wait_for_key_timeout(query.message.chat_id, msg.message_id, context))
 
 async def wait_for_key_timeout(chat_id, message_id, context: ContextTypes.DEFAULT_TYPE):
-    """If no access key is entered within 15 seconds, re-display the access key options."""
+    """Timeout if no key entered"""
     await asyncio.sleep(15)
     if context.user_data.get("awaiting_key"):
         try:
             await context.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=message_id,
-                text="🔑𝗣𝗟𝗘𝗔𝗦𝗘 𝗘𝗡𝗧𝗘𝗥 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬 𝗛𝗘𝗥𝗘👇",
-                parse_mode="Markdown",
+                text="🔑 PLEASE ENTER YOUR MASTER KEY HERE👇",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("🔑𝗘𝗡𝗧𝗘𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", callback_data="enter_access_key")],
-                    [InlineKeyboardButton("👉𝗕𝗨𝗬 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬", web_app=WebAppInfo(url=MINI_APP_URL))]
+                    [InlineKeyboardButton("🔑 ENTER MASTER KEY", callback_data="enter_access_key")]
                 ])
             )
         except Exception as e:
             print(e)
 
-async def access_key_options(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle the access key option callbacks."""
-    query = update.callback_query
-    await query.answer()
-    if query.data == "enter_access_key":
-        msg = await query.message.edit_text(
-            "🔑𝗣𝗟𝗘𝗔𝗦𝗘 𝗘𝗡𝗧𝗘𝗥 𝗬𝗢𝗨𝗥 𝗔𝗖𝗖𝗘𝗦𝗦 𝗞𝗘𝗬 𝗛𝗘𝗥𝗘👇",
-            parse_mode="Markdown"
-        )
-        context.user_data["awaiting_key"] = True
-        asyncio.create_task(wait_for_key_timeout(query.message.chat_id, msg.message_id, context))
-
 def main():
-    """Run the bot."""
     application = ApplicationBuilder().token("8477862139:AAGDfVLrhj3zPCP9Hxkt3EzF9dHAlmQLcFU").build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(begin_process, pattern="^begin_process$"))
@@ -166,9 +132,6 @@ def main():
     application.add_handler(CallbackQueryHandler(access_key_options, pattern="^enter_access_key$"))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.run_polling()
-   
+
 if __name__ == "__main__":
     main()
-
-
-
