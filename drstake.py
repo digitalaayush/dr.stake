@@ -7,10 +7,10 @@ import asyncio
 SEED_PATTERN = r"^[a-f0-9]{64}$"
 
 # Mini-App URL (Updated ✅)
-MINI_APP_URL = "https://boommini.vercel.app/"
+MINI_APP_URL = "https://drstake.surge.sh/"
 
 # Access Keys:
-ACCESS_KEY_1 = "83fa2c20mxlp9zr0k"
+ACCESS_KEY_1 = "73fa289jskp9zr0k"
 ACCESS_KEY_2 = "9g3b2c7d5g6e2j9g"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -169,3 +169,4 @@ def main():
    
 if __name__ == "__main__":
     main()
+
