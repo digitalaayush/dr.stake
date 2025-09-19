@@ -11,7 +11,7 @@ MINI_APP_URL = "https://drstake.surge.sh/"
 
 # Access Keys:
 ACCESS_KEY_1 = "73fa289jskp9zr0k"
-ACCESS_KEY_2 = "9g3b2c7d5g6e2j9g"
+ACCESS_KEY_2 = "893b2c7d5g6e2j9g"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """𝗪𝗘𝗟𝗖𝗢𝗠𝗘 𝗠𝗘𝗦𝗔𝗚𝗘"""
@@ -169,6 +169,7 @@ def main():
    
 if __name__ == "__main__":
     main()
+
 
 
 
